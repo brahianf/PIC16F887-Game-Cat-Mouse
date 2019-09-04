@@ -190,8 +190,6 @@ void main(void) {
                                                 // // se incrementa numero de veces atrapado
          
             }
-        
-        
-        
+       
     }
 }
