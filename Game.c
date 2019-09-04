@@ -25,3 +25,60 @@
 
 
 #define _XTAL_FREQ 4000000
+
+void main(void) {
+    
+    unsigned char iconVidas[8];                          //
+    unsigned char iconAtrapado[3];                       // numero de saltos rato
+    
+    unsigned char imagenGato[3];  
+    unsigned char imagenRaton[3];
+    unsigned char blanco[3];
+     
+   
+    int jumpRat=0;                                   // variable para el contador de saltos raton
+    int vidasGat=7;
+    int atrapado=0;
+    
+    int AuxPosAnteriorRat;
+    int AuxPosAnteriorGat;
+    
+    unsigned int var=2000;                       //variable Auxiliar para TMR1
+    
+    int posRat;                         // varible para almacenar posicion del Ratón
+    int posGat=rand()%(10)+4;            // valor Aleatorio de la posicion del gato  //rand() % ((nº mas alto - nº mas bajo +1) + nº más bajo)
+    AuxPosAnteriorGat=posGat;
+    //posGat=posLCD[posGat];              // posicion inicial gato en un Led
+   
+    
+    ANSEL=0;                            // seleccionamos los puertos como digitales
+    ANSELH=0;
+    
+    TRISB=0x00;                         // Salida LCD
+    
+    TRISE=0b00000011;                   // RE0, RE1 Entrada pulsadores de movimiento gato, RA7 Led para indicador gato atrapa raton
+
+    T1CON=0b00110001;                   // TMR1 como temporizador con preescaler de 8, Activar TMR1
+    INTCON=0b11000000;                  // Interrupciónes habilitadas (bits GIE y PEIE)
+    
+    PIE1bits.TMR1IE=1;                   // Interrupcion habilitada por desbordamiento        
+    PIR1bits.TMR1IF=0;                   // Poner a 0 bandera de desbordamiento TMR1IF
+    
+    TMR1=2000;                          // inicializar TMR1   retardo= (1*10^-6)(65535-6000)*8=  476 ms
+    
+    Lcd_Init();                         //inicializamos el lcd
+    Lcd_Cmd(LCD_CLEAR);                 //limpiamos lcd
+    Lcd_Cmd(LCD_CURSOR_OFF);            //apagamos el cursor
+    __delay_ms(100);                    //esperamos 100ms
+    
+    sprintf(iconVidas,"Vid%02d",vidasGat);   //guardamos en el string VidasGat el numero de vidas del Gato inicializado en 7
+    Lcd_Out2(2,10,iconVidas);             //escribimos en 2 fila, 5 Columna las vidas del gato;
+    
+    sprintf(iconAtrapado,"At%02d",atrapado); //guardamos en el string VidasGat el numero de vidas del Gato inicializado en 7
+    Lcd_Out2(2,0,iconAtrapado);             //escribimos en 2 fila, 5 Columna las vidas del gato;
+    
+    sprintf(imagenGato,"G","");
+    Lcd_Out2(1,posGat,imagenGato);  
+    
+    
+}
