@@ -81,4 +81,117 @@ void main(void) {
     Lcd_Out2(1,posGat,imagenGato);  
     
     
+    while(1){
+        
+        CLRWDT();                                   //se Limpia el WDT
+ 
+        if(PIR1bits.TMR1IF==1){                   // Si bandera de desbordamiento se ha puesto a 1
+                    
+                  sprintf(blanco," "," ");
+                  Lcd_Out2(1,AuxPosAnteriorRat,blanco);
+                  TMR1=var;                              // Volver a cargar valor TMR1   
+                  PIR1bits.TMR1IF=0;                      // Limpiar bandera
+
+                  do{                              
+
+                  posRat= rand()%(10)+4;                // Numero aleatorio entre 1 y 8    ///rand() % ((nº mas alto - nº mas bajo +1) + nº más bajo)       
+                  Lcd_Out2(1,posRat,imagenRaton); 
+
+                  }while(posRat==posGat);             // Repetir posicion del raton si es igual que la posicion del gato o es a su lado
+                  
+                  AuxPosAnteriorRat=posRat;
+                  jumpRat++;                          //Conteo de salto de Rat        
+                  sprintf(imagenGato,"G","");
+                  Lcd_Out2(1,posGat,imagenGato);
+                  sprintf(imagenRaton,"R","");
+                  Lcd_Out2(1,posRat,imagenRaton); 
+
+                  if(jumpRat>3){
+                   jumpRat=0;
+                     }
+
+                    if(jumpRat==3){                      //Salto de Raton 3 veces
+                        vidasGat--;                   // se resta una vida al Gato
+                     }
+                    if(vidasGat<0){                     //si vidas menor a 0 se mantiene en ese valor
+                        vidasGat=0;
+                        sprintf(iconVidas,"Fin","Juego");   //guardamos en el string VidasGat el numero de vidas del Gato inicializado en 7
+                        Lcd_Out2(2,10,iconVidas);              //Se muestran en dispay el numero de vidas   
+                     
+                    }
+
+                         sprintf(iconVidas,"Vid%02d ",vidasGat);   //guardamos en el string VidasGat el numero de vidas del Gato inicializado en 7
+                         Lcd_Out2(2,10,iconVidas);              //Se muestran en dispay el numero de vidas    
+     
+
+              }
+        
+
+        if(RE0==1){                               // Movimiento a la izquierda con pulsador en RA1
+                while(RE0==1){}                       // Pulsador se mantiene presionado no continua 
+                
+                AuxPosAnteriorGat=posGat;
+                sprintf(blanco," "," ");
+                Lcd_Out2(1,AuxPosAnteriorGat,blanco);
+                
+                posGat=posGat-1;                     // Corrimiento de 1 posicion a la izquierda
+          
+                if(posGat<4){
+                     posGat=13;
+                }
+                
+                sprintf(imagenGato,"G","");
+                Lcd_Out2(1,posGat,imagenGato);
+                 sprintf(imagenRaton,"R","");
+                Lcd_Out2(1,posRat,imagenRaton);        // PosRat aleatorio entre 1 y 8 en PORTB  junto Con posicion del gato  
+               
+        }
+        
+          if(RE1==1){                               // Movimiento a la izquierda con pulsador en RA1
+                while(RE1==1){}                       // Pulsador se mantiene presionado no continua
+                 AuxPosAnteriorGat=posGat;
+                sprintf(blanco," "," ");
+                Lcd_Out2(1,AuxPosAnteriorGat,blanco);
+                
+                sprintf(blanco," "," ");
+                Lcd_Out2(1,AuxPosAnteriorGat,blanco);
+                
+                posGat=posGat+1;                     // Corrimiento de 1 posicion a la izquierda
+  
+                if(posGat>13){
+                     posGat=4;
+                }
+                sprintf(imagenGato,"G","");
+                Lcd_Out2(1,posGat,imagenGato);
+                 sprintf(imagenRaton,"R","");
+                Lcd_Out2(1,posRat,imagenRaton);        // PosRat aleatorio entre 1 y 8 en PORTB  junto Con posicion del gato  
+                
+  
+         } 
+        
+ 
+         if(posRat==posGat){                  // Si el gato atrapa al raton
+                
+                jumpRat=0;
+                  
+                RA7=1;                           // Led indica que gato atrapó al raton;
+                __delay_ms(2000);                 // Espera 
+                RA7=0;                           // Apagar Led indicador para reiniciar juego.
+                
+                posGat=rand()%(10)+4;             // Nueva posicion aleatoria para el Gato
+                AuxPosAnteriorGat=posGat;
+                sprintf(imagenGato,"G","");
+                Lcd_Out2(1,posGat,imagenGato); 
+                   
+                atrapado++; 
+          
+                sprintf(iconAtrapado,"Atr%02d ",atrapado);   //guardamos en el string VidasGat el numero de vidas del Gato inicializado en 7
+                Lcd_Out2(2,0,iconAtrapado); 
+                                                // // se incrementa numero de veces atrapado
+         
+            }
+        
+        
+        
+    }
 }
